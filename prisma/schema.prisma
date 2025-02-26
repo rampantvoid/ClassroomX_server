@@ -28,7 +28,7 @@ model Classroom {
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 
-  course     Course
+  course     String
   semester   Semester
 
   facultyID  Int
@@ -36,6 +36,7 @@ model Classroom {
 
   batches    BatchOnClassroom[] // Many-to-Many relationship
   sessions   LiveCodingSession[] // One classroom can have multiple live coding sessions
+
 }
 
 enum Semester {
@@ -49,10 +50,10 @@ enum Semester {
   EIGHT
 }
 
-enum Course {
-  DAA
-  DS
-}
+// enum Course {
+//   DAA
+//   DS
+// }
 
 model Batch {
   createdAt   DateTime  @default(now())

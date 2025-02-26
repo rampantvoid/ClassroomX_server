@@ -1,21 +1,17 @@
 -- CreateEnum
 CREATE TYPE "Semester" AS ENUM ('ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT');
 
--- CreateEnum
-CREATE TYPE "Course" AS ENUM ('DAA', 'DS');
-
 -- CreateTable
 CREATE TABLE "Faculty" (
-    "id" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "employeeID" TEXT NOT NULL,
+    "employeeID" INTEGER NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "firstName" TEXT NOT NULL,
     "lastName" TEXT NOT NULL,
 
-    CONSTRAINT "Faculty_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Faculty_pkey" PRIMARY KEY ("employeeID")
 );
 
 -- CreateTable
@@ -23,7 +19,7 @@ CREATE TABLE "Classroom" (
     "id" SERIAL NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "course" "Course" NOT NULL,
+    "course" TEXT NOT NULL,
     "semester" "Semester" NOT NULL,
     "facultyID" INTEGER NOT NULL,
 
@@ -53,6 +49,8 @@ CREATE TABLE "BatchOnClassroom" (
 CREATE TABLE "Student" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "email" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
     "sap" INTEGER NOT NULL,
     "roll" TEXT NOT NULL,
     "firstName" TEXT NOT NULL,
@@ -158,16 +156,19 @@ CREATE TABLE "Result" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Faculty_employeeID_key" ON "Faculty"("employeeID");
+CREATE UNIQUE INDEX "Faculty_email_key" ON "Faculty"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Faculty_email_key" ON "Faculty"("email");
+CREATE UNIQUE INDEX "Student_email_key" ON "Student"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Student_roll_key" ON "Student"("roll");
 
 -- CreateIndex
 CREATE INDEX "Student_batchId_semester_idx" ON "Student"("batchId", "semester");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Student_batchId_semester_key" ON "Student"("batchId", "semester");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "CodeSubmission_sessionId_studentId_questionId_key" ON "CodeSubmission"("sessionId", "studentId", "questionId");
@@ -179,7 +180,7 @@ CREATE UNIQUE INDEX "LeaderboardEntry_sessionId_studentId_key" ON "LeaderboardEn
 CREATE UNIQUE INDEX "Result_sessionId_studentId_key" ON "Result"("sessionId", "studentId");
 
 -- AddForeignKey
-ALTER TABLE "Classroom" ADD CONSTRAINT "Classroom_facultyID_fkey" FOREIGN KEY ("facultyID") REFERENCES "Faculty"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Classroom" ADD CONSTRAINT "Classroom_facultyID_fkey" FOREIGN KEY ("facultyID") REFERENCES "Faculty"("employeeID") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "BatchOnClassroom" ADD CONSTRAINT "BatchOnClassroom_classroomId_fkey" FOREIGN KEY ("classroomId") REFERENCES "Classroom"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -194,7 +195,7 @@ ALTER TABLE "Student" ADD CONSTRAINT "Student_batchId_semester_fkey" FOREIGN KEY
 ALTER TABLE "LiveCodingSession" ADD CONSTRAINT "LiveCodingSession_classroomId_fkey" FOREIGN KEY ("classroomId") REFERENCES "Classroom"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "LiveCodingSession" ADD CONSTRAINT "LiveCodingSession_facultyId_fkey" FOREIGN KEY ("facultyId") REFERENCES "Faculty"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "LiveCodingSession" ADD CONSTRAINT "LiveCodingSession_facultyId_fkey" FOREIGN KEY ("facultyId") REFERENCES "Faculty"("employeeID") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "CodingQuestion" ADD CONSTRAINT "CodingQuestion_sessionId_fkey" FOREIGN KEY ("sessionId") REFERENCES "LiveCodingSession"("id") ON DELETE CASCADE ON UPDATE CASCADE;
