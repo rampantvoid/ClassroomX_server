@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { StudentService } from './student.service';
 import { GetDecodedToken } from 'src/auth/decorator';
 import { Student } from '@prisma/client';
@@ -12,5 +12,15 @@ export class StudentController {
   @Get('me')
   getme(@GetDecodedToken() user: { id: number; email: string }) {
     return this.studentService.getST(user);
+  }
+
+  @Get('classrooms')
+  getClassrooms(@GetDecodedToken() user: { id: number; email: string }) {
+    return this.studentService.getClassrooms(user);
+  }
+
+  @Get('classroom/:id')
+  getClassroom(@Param() params: any) {
+    return this.studentService.getClassroom(params);
   }
 }
